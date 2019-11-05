@@ -15,11 +15,28 @@ ENTITY ALU IS
 END ALU;
 
 ARCHITECTURE structural OF ALU IS
+  signal inter := std_logic_vector(WIDTH downto 0);
+  signal zero := std_logic_vector(WIDTH - 1 downto 0);
 BEGIN
     PROCESS (in0, in1, op_code)
     BEGIN
         CASE op_code IS
-            WHEN "0000" => result <= in0 + in1; -- ADD Output bitwise addition of A and B
+            WHEN "0000" => inter <= in0 + in1; -- ADD Output bitwise addition of A and B
+              begin
+                CASE op_code IS
+                  WHEN "0000" =>
+                    inter <= in0 + in1;
+                    IF (in0(0) = '0' AND in1(0) = '0') THEN
+                      IF inter(1) = '1' THEN
+                        status(0) <= '1';
+                      END IF;
+                      ELSE IF (in0(0) = '1' AND in1(0) = '1')
+                        IF inter(1) = '0' THEN
+                          status(0) <= '1';
+                        END IF;
+                      ELSE
+                        status(0) <= '0';
+                    END IF;
             WHEN "0001" => result <= in0 - in1; -- SUB Output bitwise subtraction of A and B
             WHEN "0010" => result <= in0 * in1; -- MUL Output multiplication of A and B
                 -- import error
@@ -37,6 +54,14 @@ BEGIN
                 -- vhdl 2008 only
                 --WHEN "1110" => result <= MAXIMUM(in0, in1); -- MAX Output largest operand of the two A and B
                 --WHEN "1111" => result <= MINIMUM(in0, in1); -- MIN Output smallest operand of the two A and B
+                result <= inter(WIDTH - 1 downto 0);
+                status(1) <= inter(0);
+                status(2) <= inter(1);
+                IF result = zero THEN
+                  status(3) <= '1';
+                ELSE
+                  status(3) <= '0';
+                END IF;
         END CASE;
     END PROCESS;
 END structural;
