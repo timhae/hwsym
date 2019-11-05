@@ -12,18 +12,18 @@ END mux;
 ARCHITECTURE structural OF mux IS
 BEGIN
 	WITH S SELECT
-	O <= A WHEN "00", 
-	     B WHEN "01", 
-	     C WHEN "10", 
-	     D WHEN OTHERS;
+		O <= A WHEN "00",
+		B WHEN "01",
+		C WHEN "10",
+		D WHEN OTHERS;
 END structural;
 
 ARCHITECTURE structural_2 OF mux IS
 BEGIN
 	O <= A WHEN S = "00" ELSE
-	     B WHEN S = "01" ELSE
-	     C WHEN S = "10" ELSE
-	     D;
+		B WHEN S = "01" ELSE
+		C WHEN S = "10" ELSE
+		D;
 END structural_2;
 
 ARCHITECTURE structural_3 OF mux IS
@@ -48,14 +48,14 @@ END structural_3;
 
 ARCHITECTURE structural_4 OF mux IS
 BEGIN
-    PROCESS (A, B, C, D, S)
-    BEGIN
-        CASE s IS
-            WHEN "00" => O <= A;
-            WHEN "01" => O <= B;
-            WHEN "10" => O <= C;
-            WHEN "11" => O <= D;
-            WHEN OTHERS => O <= A;
-        END CASE;
-    END PROCESS;
+	PROCESS (A, B, C, D, S)
+	BEGIN
+		CASE s IS
+			WHEN "00" => O <= A;
+			WHEN "01" => O <= B;
+			WHEN "10" => O <= C;
+			WHEN "11" => O <= D;
+			WHEN OTHERS => O <= A;
+		END CASE;
+	END PROCESS;
 END structural_4;
