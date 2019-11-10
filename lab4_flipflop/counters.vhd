@@ -1,111 +1,107 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+-- set_property file_type {VHDL 2008} [get_files *]
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.NUMERIC_STD.ALL;
+USE IEEE.std_logic_unsigned.ALL;
 
-library STD_LOGIC_ARITH;
-use STD_LOGIC_ARITH.ALL;
+ENTITY Counters IS
+    GENERIC (
+        Fin : INTEGER := 100000000;
+        Fout : INTEGER := 1);
+    PORT (
+        Clk : IN STD_LOGIC;
+        Reset : IN STD_LOGIC;
+        Up : IN STD_LOGIC;
+        Down : IN STD_LOGIC;
+        RW : IN STD_LOGIC;
+        Condition : IN STD_LOGIC_VECTOR (1 DOWNTO 0);
+        Hours : OUT STD_LOGIC_VECTOR (4 DOWNTO 0);
+        Minutes : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
+        Seconds : OUT STD_LOGIC_VECTOR (5 DOWNTO 0)
+    );
+END Counters;
 
-entity Counters is
-    Generic (Fin : integer := 100000000;
-             Fout : integer := 1);
-    Port (Clk : in STD_LOGIC;
-          Reset : in STD_LOGIC;
-          Up : in STD_LOGIC;
-          Down : in STD_LOGIC;
-          RW : in STD_LOGIC;
-          Condition : in STD_LOGIC_VECTOR (1 downto 0);
-          Hours : out STD_LOGIC_VECTOR (4 downto 0);
-          Minutes : out STD_LOGIC_VECTOR (5 downto 0);
-          Seconds : out STD_LOGIC_VECTOR (5 downto 0)
-          );
-          
-end Counters;
+ARCHITECTURE behavioral OF counters IS
+    SIGNAL h_count : std_logic_vector(4 DOWNTO 0);
+    SIGNAL m_count, s_count : std_logic_vector(5 DOWNTO 0);
+    SIGNAL modulo_count : INTEGER := 0;
+    SIGNAL slow_clock : std_logic := '0';
+BEGIN
+    -- clock divisor
+    PROCESS (Clk)
+    BEGIN
+        IF (clk'event AND clk = '1') THEN
+            IF (modulo_count = Fin - 1) THEN
+                modulo_count <= 0;
+                slow_clock <= '1';
+            ELSE
+                modulo_count <= modulo_count + 1;
+                slow_clock <= '0';
+            END IF;
+        END IF;
+    END PROCESS;
 
-architecture behavioral of counters is
+    -- actual processing
+    PROCESS (Clk, Reset, Up, Down, RW, Condition)
+    BEGIN
+        -- reset highest prio, async
+        IF (reset = '1') THEN
+            h_count <= "00000";
+            m_count <= "000000";
+            s_count <= "000000";
 
-component EdgeDetector is
-    port (Clk : in STD_LOGIC;
-          InputSignal : in STD_LOGIC;
-          Edge : out STD_LOGIC
-          );
-end component;
+            -- write second highest prio, async, overflow only within number
+        ELSIF (RW = '1') THEN
+            -- change hours
+            IF (Condition = "00") THEN
+                IF (Up = '1' AND Down = '0' AND h_count = "10111") THEN
+                    h_count <= "00000";
+                ELSIF (Up = '0' AND Down = '1' AND h_count = "00000") THEN
+                    h_count <= "10111";
+                ELSE
+                    h_count <= h_count + 1;
+                END IF;
 
-signal ticks : integer := 0;
-signal Seconds_int : integer := 0;
-signal Minutes_int : integer := 0;
-signal Hours_int : integer := 0;
+                -- change minutes
+            ELSIF Condition = "01" THEN
+                IF (Up = '1' AND Down = '0' AND m_count = "111011") THEN
+                    m_count <= "000000";
+                ELSIF (Up = '0' AND Down = '1' AND m_count = "000000") THEN
+                    m_count <= "111011";
+                ELSE
+                    m_count <= m_count + 1;
+                END IF;
 
-signal condition_real : STD_LOGIC_VECTOR (1 downto 0);
-signal up_real : STD_LOGIC;
-signal down_real : STD_LOGIC;
+                -- change seconds
+            ELSIF Condition = "10" THEN
+                IF (Up = '1' AND Down = '0' AND s_count = "111011") THEN
+                    s_count <= "000000";
+                ELSIF (Up = '0' AND Down = '1' AND s_count = "000000") THEN
+                    s_count <= "111011";
+                ELSE
+                    s_count <= s_count + 1;
+                END IF;
+            END IF;
 
-begin
-    edge_detector_component : edge_detector
-    port map(Clk <= Clk, InputSignal <= Component, Edge <= component_real);
-    
-    edge_detector_up : edge_detector
-    port map(Clk <= Clk, InputSignal <= Up, Edge <= up_real);
-    
-    edge_detector_down : edge_detector
-    port map(Clk <= Clk, InputSignal <= Down, Edge <= down_real);
-    
-    process (Clk) is
-    begin
-        if rising_edge(Clk) then
-            if (Reset = '1')then 
-                ticks <= 0;
-                Seconds_int <= 0;
-                Minutes_int <= 0;
-                Hours_int <= 0;
-            else
-                if (RW = '0') then -- read mode
-                    if ticks = Fin then -- one second
-                        ticks <= 0;
-                        
-                        if Seconds_int = 59 then -- one minute
-                            Seconds_int <= 0;
-            
-                            if Minutes_int = 59 then -- one hour
-                                Minutes_int <= 0;
-                                
-                                if Hours_int = 23 then -- one day
-                                    Hours_int <= 0;
-                                else
-                                    Hours_int <= Hours_int + 1;
-                                end if;
-                            else
-                                Minutes_int <= Minutes_int + 1;
-                            end if;
-                        else
-                            Seconds_int <= Seconds_int + 1;
-                        end if;
-                   else
-                       ticks <= ticks + 1;
-                   end if;
-                else --write mode
-                    if (condition_real = "00") then -- seconds
-                        if (up_real = '1') then
-                            Seconds_int <= Seconds_int + 1;
-                        elsif (down_real = '1') then
-                            Seconds_int <= Seconds_int - 1;
-                        end if;
-                    elsif (condition_real = "01") then -- minutes
-                         if (up_real = '1') then
-                            Minutes_int <= Minutes_int + 1;
-                        elsif (down_real = '1') then
-                            Minutes_int <= Minutes_int - 1;
-                        end if;
-                    elsif (condition_real = "10") then -- hours
-                         if (up_real = '1') then
-                            Hours_int <= Hours_int + 1;
-                        elsif (down_real = '1') then
-                            Hours_int <= Hours_int - 1;
-                        end if;
-                    end if;
-                end if;
-               Seconds <= conv_std_logic_vector(Seconds_int, Seconds'length);
-               Minutes <= conv_std_logic_vector(Minutes_int, Minutes'length);
-               Hours <= conv_std_logic_vector(Hours_int, Hours'length);     
-                
-          end if;
-    end process;
-end behavioral;
+            -- normal counting mode last prio, sync
+        ELSIF (RW = '0' AND clk'event AND clk = '1' AND slow_clock = '1') THEN
+            s_count <= s_count + 1;
+            -- handle overflows
+            IF (s_count = "111011") THEN
+                s_count <= "000000";
+                m_count <= m_count + 1;
+            END IF;
+            IF (m_count = "111011") THEN
+                m_count <= "000000";
+                h_count <= h_count + 1;
+            END IF;
+            IF (h_count = "10111") THEN
+                h_count <= "00000";
+            END IF;
+        END IF;
+    END PROCESS;
+
+    Hours <= h_count;
+    Minutes <= m_count;
+    Seconds <= s_count;
+END behavioral;
