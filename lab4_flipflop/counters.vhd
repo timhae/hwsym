@@ -2,7 +2,6 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
-USE IEEE.std_logic_unsigned.ALL;
 
 ENTITY Counters IS
     GENERIC (
@@ -50,7 +49,7 @@ BEGIN
             m_count <= "000000";
             s_count <= "000000";
 
-            -- write second highest prio, async, overflow only within number
+        -- write second highest prio, async, overflow only within number
         ELSIF (RW = '1') THEN
             -- change hours
             IF (Condition = "00") THEN
@@ -59,41 +58,41 @@ BEGIN
                 ELSIF (Up = '0' AND Down = '1' AND h_count = "00000") THEN
                     h_count <= "10111";
                 ELSE
-                    h_count <= h_count + 1;
+                    h_count <= std_logic_vector(unsigned(h_count) + 1);
                 END IF;
 
-                -- change minutes
+            -- change minutes
             ELSIF Condition = "01" THEN
                 IF (Up = '1' AND Down = '0' AND m_count = "111011") THEN
                     m_count <= "000000";
                 ELSIF (Up = '0' AND Down = '1' AND m_count = "000000") THEN
                     m_count <= "111011";
                 ELSE
-                    m_count <= m_count + 1;
+                    m_count <= std_logic_vector(unsigned(m_count) + 1);
                 END IF;
 
-                -- change seconds
+            -- change seconds
             ELSIF Condition = "10" THEN
                 IF (Up = '1' AND Down = '0' AND s_count = "111011") THEN
                     s_count <= "000000";
                 ELSIF (Up = '0' AND Down = '1' AND s_count = "000000") THEN
                     s_count <= "111011";
                 ELSE
-                    s_count <= s_count + 1;
+                    s_count <= std_logic_vector(unsigned(s_count) + 1);
                 END IF;
             END IF;
 
-            -- normal counting mode last prio, sync
+        -- normal counting mode last prio, sync
         ELSIF (RW = '0' AND clk'event AND clk = '1' AND slow_clock = '1') THEN
-            s_count <= s_count + 1;
+            s_count <= std_logic_vector(unsigned(s_count) + 1);
             -- handle overflows
             IF (s_count = "111011") THEN
                 s_count <= "000000";
-                m_count <= m_count + 1;
+                m_count <= std_logic_vector(unsigned(m_count) + 1);
             END IF;
             IF (m_count = "111011") THEN
                 m_count <= "000000";
-                h_count <= h_count + 1;
+                h_count <= std_logic_vector(unsigned(h_count) + 1);
             END IF;
             IF (h_count = "10111") THEN
                 h_count <= "00000";
