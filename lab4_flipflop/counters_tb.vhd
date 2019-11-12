@@ -36,13 +36,12 @@ architecture Behavioral of counters_tb is
     signal Seconds : STD_LOGIC_VECTOR (5 downto 0) := (others=>'0');
     
    -- Clock period definitions
-    constant clk_period : time := 10 ns;    -- 100MHz (PIN Y9 on the Zedboard)
+    constant clk_period : time := 5 ns;    -- 100MHz (PIN Y9 on the Zedboard)
     
 begin
 
     --Instantiate the Unit Under Test (UUT)
-    uut: Counters 
-    Port Map (
+    uut: Counters Port Map (
         Clk => Clk,
         Reset => Reset,
         Up => Up,
@@ -92,7 +91,8 @@ begin
         
         wait for 100 ns;
         RW <= '1';
-        Condition <= "11";
+        Condition <= "10";
+        wait for clk_period;
         Down <= '1';
         wait for clk_period;
         Down <= '0';
@@ -100,9 +100,26 @@ begin
         wait for 5*clk_period;
         RW <= '0';
         Condition <= "00";
+
         wait for 5*clk_period;
+        RW <= '1';
+        Down <= '1';
+        wait for clk_period;
+        Down <= '0';
+        RW <= '0';
+
+        wait for 5*clk_period;
+        RW <= '1';
+        Up <= '1';
+        wait for clk_period/2;
+        Up <= '0';
+        Condition <= "01";
+        Down <= '1';
+        wait for 3*clk_period;
+        Down <= '0';
+        Condition <= "00";
+        RW <= '0';
 
         wait;
     end process;
-
 end;

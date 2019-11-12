@@ -1,4 +1,3 @@
--- set_property file_type {VHDL 2008} [get_files *]
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
@@ -24,88 +23,94 @@ ARCHITECTURE behavioral OF counters IS
     SIGNAL h_count, m_count, s_count : INTEGER := 0;
     SIGNAL modulo_count : INTEGER := 0;
 BEGIN
-    -- actual processing
     PROCESS (Clk, Reset, Up, Down, RW)
     BEGIN
         -- reset highest prio, async
         IF (reset = '0') THEN
+            -- write mode second highest prio, async
+            IF (RW = '1') THEN
 
-
-    
-            -- normal counting mode last prio, sync
-            IF (clk'event AND clk = '1') THEN
-            
-                
-                    -- write second highest prio, async, overflow only within number
-                    IF (RW = '1') THEN
-                        -- change hours
-                        IF (Condition = "00") THEN
-                            IF (Up = '1' AND Down = '0') THEN
-                                if (h_count = 23) then
-                                    h_count <= 0;
-                                else
-                                    
-                                end if;           
-                            ELSIF (Up = '0' AND Down = '1') THEN
-                                if (h_count = 0) then
-                                    h_count <= 23;
-                            END IF;
-        
-                        -- change minutes
-                        ELSIF Condition = "01" THEN
-                            IF (Up = '1' AND Down = '0' AND m_count = 59) THEN
-                                m_count <= 0;
-                            ELSIF (Up = '0' AND Down = '1' AND m_count = 0) THEN
-                                m_count <= 59;
-                            ELSE
-                                m_count <= m_count + 1;
-                            END IF;
-            
-                        -- change seconds
-                        ELSIF Condition = "10" THEN
-                            IF (Up = '1' AND Down = '0' AND s_count = 59) THEN
-                                s_count <= 0;
-                            ELSIF (Up = '0' AND Down = '1' AND s_count = 0) THEN
-                                s_count <= 59;
-                            ELSE
-                                s_count <= s_count + 1;
-                            END IF;
+                -- change hours
+                IF (Condition = "00") THEN
+                    IF (Up = '1' AND Down = '0') THEN
+                        IF (h_count = 23) THEN
+                            h_count <= 0;
+                        ELSE
+                            h_count <= h_count + 1;
                         END IF;
-    
-                    elsif (rw='0') then
-                        IF (modulo_count = Fin) then
-                            modulo_count <= 0;
+                    ELSIF (Up = '0' AND Down = '1') THEN
+                        IF (h_count = 0) THEN
+                            h_count <= 23;
+                        ELSE
+                            h_count <= h_count - 1;
+                        END IF;
+                    END IF;
+
+                -- change minutes
+                ELSIF Condition = "01" THEN
+                    IF (Up = '1' AND Down = '0') THEN
+                        IF (m_count = 59) THEN
+                            m_count <= 0;
+                        ELSE
+                            m_count <= m_count + 1;
+                        END IF;
+                    ELSIF (Up = '0' AND Down = '1') THEN
+                        IF (m_count = 0) THEN
+                            m_count <= 59;
+                        ELSE
+                            m_count <= m_count - 1;
+                        END IF;
+                    END IF;
+
+                -- change seconds
+                ELSIF Condition = "10" THEN
+                    IF (Up = '1' AND Down = '0') THEN
+                        IF (s_count = 59) THEN
+                            s_count <= 0;
+                        ELSE
                             s_count <= s_count + 1;
-                            -- handle overflows
-                            IF (s_count = 60) THEN
-                                s_count <= 0;
-                                m_count <= m_count + 1;
-                            END IF;
-                            IF (m_count = 60) THEN
-                                m_count <= 0;
-                                h_count <= h_count + 1;
-                            END IF;
-                            IF (h_count = 24) THEN
+                        END IF;
+                    ELSIF (Up = '0' AND Down = '1') THEN
+                        IF (s_count = 0) THEN
+                            s_count <= 59;
+                        ELSE
+                            s_count <= s_count - 1;
+                        END IF;
+                    END IF;
+                END IF;
+
+            -- normal counting mode last prio, sync
+            ELSIF (RW = '0' AND clk'event AND clk = '1') THEN
+                IF (modulo_count = Fin) THEN
+                    modulo_count <= 0;
+                    s_count <= s_count + 1;
+                    -- handle overflows
+                    IF (s_count = 59) THEN
+                        s_count <= 0;
+                        m_count <= m_count + 1;
+                        IF (m_count = 59) THEN
+                            m_count <= 0;
+                            h_count <= h_count + 1;
+                            IF (h_count = 23) THEN
                                 h_count <= 0;
                             END IF;
-                        else
-                            modulo_count <= modulo_count + 1;
-                        end if;
-                    end if;
-                
+                        END IF;
+                    END IF;
+                ELSE
+                    modulo_count <= modulo_count + 1;
+                END IF;
             END IF;
-        
+
         -- reset
-        else
+        ELSE
             modulo_count <= 0;
             h_count <= 0;
             m_count <= 0;
             s_count <= 0;
-        end if;
-
+        END IF;
     END PROCESS;
 
-    Hours <= std_logic_vector(to_signed(h_count, 5));
-    Minutes <= std_logic_vector(to_signed(m_count, 6));
-    Seconds <= std_logic_vector(to_signed(s_count, 6));
+    Hours <= std_logic_vector(to_unsigned(h_count, 5));
+    Minutes <= std_logic_vector(to_unsigned(m_count, 6));
+    Seconds <= std_logic_vector(to_unsigned(s_count, 6));
 END behavioral;
