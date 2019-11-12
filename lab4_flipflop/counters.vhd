@@ -1,8 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-
-library STD_LOGIC_ARITH;
-use STD_LOGIC_ARITH.ALL;
+use IEEE.numeric_std.ALL;
 
 entity Counters is
     Generic (Fin : integer := 100000000;
@@ -34,20 +32,7 @@ signal Seconds_int : integer := 0;
 signal Minutes_int : integer := 0;
 signal Hours_int : integer := 0;
 
-signal condition_real : STD_LOGIC_VECTOR (1 downto 0);
-signal up_real : STD_LOGIC;
-signal down_real : STD_LOGIC;
-
 begin
-    edge_detector_component : edge_detector
-    port map(Clk <= Clk, InputSignal <= Component, Edge <= component_real);
-    
-    edge_detector_up : edge_detector
-    port map(Clk <= Clk, InputSignal <= Up, Edge <= up_real);
-    
-    edge_detector_down : edge_detector
-    port map(Clk <= Clk, InputSignal <= Down, Edge <= down_real);
-    
     process (Clk) is
     begin
         if rising_edge(Clk) then
@@ -82,29 +67,29 @@ begin
                        ticks <= ticks + 1;
                    end if;
                 else --write mode
-                    if (condition_real = "00") then -- seconds
-                        if (up_real = '1') then
+                    if (condition = "00") then -- seconds
+                        if (up = '1') then
                             Seconds_int <= Seconds_int + 1;
-                        elsif (down_real = '1') then
+                        elsif (down = '1') then
                             Seconds_int <= Seconds_int - 1;
                         end if;
-                    elsif (condition_real = "01") then -- minutes
-                         if (up_real = '1') then
+                    elsif (condition = "01") then -- minutes
+                         if (up = '1') then
                             Minutes_int <= Minutes_int + 1;
-                        elsif (down_real = '1') then
+                        elsif (down = '1') then
                             Minutes_int <= Minutes_int - 1;
                         end if;
-                    elsif (condition_real = "10") then -- hours
-                         if (up_real = '1') then
+                    elsif (condition = "10") then -- hours
+                         if (up = '1') then
                             Hours_int <= Hours_int + 1;
-                        elsif (down_real = '1') then
+                        elsif (down = '1') then
                             Hours_int <= Hours_int - 1;
                         end if;
                     end if;
                 end if;
-               Seconds <= conv_std_logic_vector(Seconds_int, Seconds'length);
-               Minutes <= conv_std_logic_vector(Minutes_int, Minutes'length);
-               Hours <= conv_std_logic_vector(Hours_int, Hours'length);     
+               Seconds <= std_logic_vector(to_signed(Seconds_int, Seconds'length));
+               Minutes <= std_logic_vector(to_signed(Minutes_int, Minutes'length));
+               Hours <= std_logic_vector(to_signed(Hours_int, Hours'length));
                 
           end if;
     end process;
