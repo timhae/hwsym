@@ -41,7 +41,8 @@ architecture Behavioral of counters_tb is
 begin
 
     --Instantiate the Unit Under Test (UUT)
-    uut: Counters Port Map (
+    uut: Counters 
+    Port Map (
         Clk => Clk,
         Reset => Reset,
         Up => Up,
@@ -73,7 +74,7 @@ begin
         Reset <= '0';
         wait for clk_period;
         
-        wait for 900 us;
+        wait for 900 ns;
         RW <= '1';
         Condition <= "01";
         wait for 10*clk_period;
@@ -89,7 +90,7 @@ begin
         RW <='0';
         Condition <= "00";
         
-        wait for 100 us;
+        wait for 100 ns;
         RW <= '1';
         Condition <= "11";
         Down <= '1';
