@@ -3,20 +3,20 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY EdgeDetector IS
     PORT (
-        Clk : IN STD_LOGIC;
-        InputSignal : IN STD_LOGIC;
-        Edge : OUT STD_LOGIC
+        Clk         : IN  STD_LOGIC;
+        InputSignal : IN  STD_LOGIC;
+        Edge        : OUT STD_LOGIC
     );
 END EdgeDetector;
 
 ARCHITECTURE behavioral OF EdgeDetector IS
     COMPONENT flipflop IS
         PORT (
-            clk, input : IN std_logic;
-            output : OUT std_logic);
+            clk, input : IN  STD_LOGIC;
+            output     : OUT STD_LOGIC);
     END COMPONENT;
 
-    SIGNAL Q_1, Q_2 : std_logic;
+    SIGNAL Q_1, Q_2 : STD_LOGIC;
 
 BEGIN
     ff_1 : flipflop

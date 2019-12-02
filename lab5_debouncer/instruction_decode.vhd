@@ -1,20 +1,17 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+ENTITY Instruction_Decode IS
+    GENERIC (WIDTH : POSITIVE := 8);
+    PORT (
+        instruction                 : IN  STD_LOGIC_VECTOR(31 DOWNTO 0);
+        IF_valid, EX_valid, rd, clk : IN  STD_LOGIC;
+        ID_valid                    : OUT STD_LOGIC;
+        opcode                      : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        in1, in2                    : OUT STD_LOGIC_VECTOR(WIDTH - 1 DOWNTO 0)
+    );
+END Instruction_Decode;
 
+ARCHITECTURE Behavioral OF Instruction_Decode IS
 
-entity Instruction_Decode is
-    generic(WIDTH : positive := 8);
-    Port(instruction : in std_logic_vector(31 downto 0);
-         IF_valid, EX_valid, rd, clk : in std_logic;
-         ID_valid : out std_logic;
-         opcode : out std_logic_vector(3 downto 0);
-         in1, in2 : out std_logic_vector(WIDTH - 1 downto 0)
-         );
-end Instruction_Decode;
-
-architecture Behavioral of Instruction_Decode is
-
-begin
-
-
-end Behavioral;
+BEGIN
+END Behavioral;

@@ -1,13 +1,11 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
-entity cpu is
-    Port(clk, rst, slct, start : in std_logic);
-end cpu;
+ENTITY cpu IS
+    PORT (clk, rst, slct, start : IN STD_LOGIC);
+END cpu;
 
-architecture Behavioral of cpu is
+ARCHITECTURE Behavioral OF cpu IS
 
-begin
-
-
-end Behavioral;
+BEGIN
+END Behavioral;

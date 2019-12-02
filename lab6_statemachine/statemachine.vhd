@@ -1,105 +1,103 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+ENTITY StateMachine IS
+    PORT (
+        Clk       : IN  STD_LOGIC;
+        Reset     : IN  STD_LOGIC;
+        PB_Left   : IN  STD_LOGIC;
+        PB_Right  : IN  STD_LOGIC;
+        PB_Center : IN  STD_LOGIC;
+        RW        : OUT STD_LOGIC;
+        Condition : OUT STD_LOGIC_VECTOR(1 DOWNTO 0)
+    );
+END StateMachine;
 
+ARCHITECTURE Behavioral OF StateMachine IS
 
-entity StateMachine is
-	port (
-		Clk : in STD_LOGIC;
-		Reset : in STD_LOGIC;
-		PB_Left : in STD_LOGIC;
-		PB_Right : in STD_LOGIC;
-		PB_Center : in STD_LOGIC;
-		RW : out STD_LOGIC;
-		Condition : out STD_LOGIC_VECTOR(1 downto 0)
-	);
-end StateMachine;
+    TYPE state_type IS (read, write_h, write_m, write_s);
+    SIGNAL state, next_state : state_type;
 
-architecture Behavioral of StateMachine is
+BEGIN
 
-type state_type is (read, write_h, write_m, write_s);
-   signal state, next_state : state_type;
-       
-begin
+    SYNC_PROC : PROCESS (Clk)
+    BEGIN
+        IF (Clk'event AND Clk = '1') THEN
+            IF (Reset = '1') THEN
+                state <= read;
+            ELSE
+                state <= next_state;
+                -- assign other outputs to internal signals
+            END IF;
+        END IF;
+    END PROCESS;
 
- SYNC_PROC: process (Clk)
-   begin
-      if (Clk'event and Clk = '1') then
-         if (Reset = '1') then
-            state <= read;
-         else
-            state <= next_state;
-         -- assign other outputs to internal signals
-         end if;
-      end if;
-   end process;
-   
-   OUTPUT_DECODE: process (state)
-   begin
-      --insert statements to decode internal output signals
-      --below is simple example
-      if state = read then
-         RW <= '0';
-      else
-         RW <= '1';
-      end if;
-      
-      if state = write_h then
-        Condition <= "00";
-      elsif state = write_m then
-        Condition <= "01";
-      elsif state = write_s then
-        Condition <= "10";
-      else
-        Condition <= "11";
-      end if;
-   end process;
-   
-   NEXT_STATE_DECODE: process (state, PB_Left, PB_Right, PB_Center)
-   begin
-      --declare default state for next_state to avoid latches
-      next_state <= state;  --default is to stay in current state
-      --insert statements to decode next_state
-      --below is a simple example
-      case (state) is
-         when read =>
-            if PB_center = '1' then
-               next_state <= write_h;
-            end if;
-            
-         when write_h =>
-            if PB_right = '1' then
-               next_state <= write_m;
-            elsif PB_left = '1' then
-               next_state <= write_s;
-            end if;
-            
-            if PB_center = '1' then
-               next_state <= read;
-            end if;
-            
-         when write_m =>
-            if PB_right = '1' then
-               next_state <= write_s;
-            elsif PB_left = '1' then
-               next_state <= write_h;
-            end if;
-            
-            if PB_center = '1' then
-               next_state <= read;
-            end if;
-         
-         when write_s =>
-            if PB_right = '1' then
-               next_state <= write_h;
-            elsif PB_left = '1' then
-               next_state <= write_m;
-            end if;
-            
-            if PB_center = '1' then
-               next_state <= read;
-            end if;
-            
-      end case;
-   end process;
+    OUTPUT_DECODE : PROCESS (state)
+    BEGIN
+        --insert statements to decode internal output signals
+        --below is simple example
+        IF state = read THEN
+            RW <= '0';
+        ELSE
+            RW <= '1';
+        END IF;
 
-end Behavioral;
+        IF state = write_h THEN
+            Condition <= "00";
+        ELSIF state = write_m THEN
+            Condition <= "01";
+        ELSIF state = write_s THEN
+            Condition <= "10";
+        ELSE
+            Condition <= "11";
+        END IF;
+    END PROCESS;
+
+    NEXT_STATE_DECODE : PROCESS (state, PB_Left, PB_Right, PB_Center)
+    BEGIN
+        --declare default state for next_state to avoid latches
+        next_state <= state; --default is to stay in current state
+        --insert statements to decode next_state
+        --below is a simple example
+        CASE (state) IS
+            WHEN read =>
+                IF PB_center = '1' THEN
+                    next_state <= write_h;
+                END IF;
+
+            WHEN write_h =>
+                IF PB_right = '1' THEN
+                    next_state <= write_m;
+                ELSIF PB_left = '1' THEN
+                    next_state <= write_s;
+                END IF;
+
+                IF PB_center = '1' THEN
+                    next_state <= read;
+                END IF;
+
+            WHEN write_m =>
+                IF PB_right = '1' THEN
+                    next_state <= write_s;
+                ELSIF PB_left = '1' THEN
+                    next_state <= write_h;
+                END IF;
+
+                IF PB_center = '1' THEN
+                    next_state <= read;
+                END IF;
+
+            WHEN write_s =>
+                IF PB_right = '1' THEN
+                    next_state <= write_h;
+                ELSIF PB_left = '1' THEN
+                    next_state <= write_m;
+                END IF;
+
+                IF PB_center = '1' THEN
+                    next_state <= read;
+                END IF;
+
+        END CASE;
+    END PROCESS;
+
+END Behavioral;

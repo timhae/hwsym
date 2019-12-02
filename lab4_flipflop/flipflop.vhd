@@ -3,9 +3,9 @@ USE IEEE.STD_LOGIC_1164.ALL;
 
 ENTITY flipflop IS
     PORT (
---        clk, input, rst, enable : IN std_logic;
-        clk, input : IN std_logic;
-        output : OUT std_logic);
+        --        clk, input, rst, enable : IN std_logic;
+        clk, input : IN  STD_LOGIC;
+        output     : OUT STD_LOGIC);
 END flipflop;
 
 ARCHITECTURE behavioral OF flipflop IS

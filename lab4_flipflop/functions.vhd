@@ -1,22 +1,22 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 
-package functions is
+PACKAGE functions IS
 
-    function log2( i : natural) return integer;
-    
-end;
+    FUNCTION log2(i : NATURAL) RETURN INTEGER;
 
-package body functions is
-    function log2( i : natural) return integer is
-        variable temp    : integer := i;
-        variable ret_val : integer := 0; 
-        begin					
-            while temp > 1 loop
-                ret_val := ret_val + 1;
-                temp    := temp / 2;     
-            end loop;
-        return ret_val;
-    end function;
-end package body;
+END;
+
+PACKAGE BODY functions IS
+    FUNCTION log2(i  : NATURAL) RETURN INTEGER IS
+        VARIABLE temp    : INTEGER := i;
+        VARIABLE ret_val : INTEGER := 0;
+    BEGIN
+        WHILE temp > 1 LOOP
+            ret_val := ret_val + 1;
+            temp    := temp / 2;
+        END LOOP;
+        RETURN ret_val;
+    END FUNCTION;
+END PACKAGE BODY;
