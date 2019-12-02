@@ -38,16 +38,16 @@ begin
       --insert statements to decode internal output signals
       --below is simple example
       if state = read then
-         RW <= '1';
-      else
          RW <= '0';
+      else
+         RW <= '1';
       end if;
       
-      if state = read then
+      if state = write_h then
         Condition <= "00";
-      elsif state = write_h then
-        Condition <= "01";
       elsif state = write_m then
+        Condition <= "01";
+      elsif state = write_s then
         Condition <= "10";
       else
         Condition <= "11";
