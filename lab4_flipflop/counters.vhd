@@ -13,7 +13,7 @@ ENTITY Counters IS
         Down      : IN  STD_LOGIC;
         RW        : IN  STD_LOGIC;
         Condition : IN  STD_LOGIC_VECTOR (1 DOWNTO 0);
-        Hours     : OUT STD_LOGIC_VECTOR (4 DOWNTO 0);
+        Hours     : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
         Minutes   : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
         Seconds   : OUT STD_LOGIC_VECTOR (5 DOWNTO 0)
     );
@@ -110,7 +110,7 @@ BEGIN
         END IF;
     END PROCESS;
 
-    Hours   <= STD_LOGIC_VECTOR(to_unsigned(h_count, 5));
+    Hours   <= STD_LOGIC_VECTOR(to_unsigned(h_count, 6));
     Minutes <= STD_LOGIC_VECTOR(to_unsigned(m_count, 6));
     Seconds <= STD_LOGIC_VECTOR(to_unsigned(s_count, 6));
 END behavioral;
