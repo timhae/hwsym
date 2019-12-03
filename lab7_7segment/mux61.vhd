@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY Mux6to1_4bits IS
+ENTITY Mux61 IS
     PORT (
         A      : IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
         B      : IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
@@ -11,9 +11,9 @@ ENTITY Mux6to1_4bits IS
         F      : IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
         Sel    : IN  STD_LOGIC_VECTOR (2 DOWNTO 0);
         Output : OUT STD_LOGIC_VECTOR (3 DOWNTO 0));
-END Mux6to1_4bits;
+END Mux61;
 
-ARCHITECTURE behavioural OF Mux6to1_4bits IS
+ARCHITECTURE behavioural OF Mux61 IS
 BEGIN
     PROCESS (Sel)
     BEGIN

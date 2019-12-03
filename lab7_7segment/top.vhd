@@ -11,7 +11,8 @@ entity Top is
            PB_Down : in STD_LOGIC; 
            PB_Center : in STD_LOGIC; 
            Digits : out STD_LOGIC_VECTOR (5 downto 0); 
-           Segments : out STD_LOGIC_VECTOR (6 downto 0)); 
+           Segments : out STD_LOGIC_VECTOR (6 downto 0)
+    ); 
 end Top; 
 
 architecture behavioural of Top is
@@ -48,7 +49,7 @@ PORT (
         Down      : IN  STD_LOGIC;
         RW        : IN  STD_LOGIC;
         Condition : IN  STD_LOGIC_VECTOR (1 DOWNTO 0);
-        Hours     : OUT STD_LOGIC_VECTOR (4 DOWNTO 0);
+        Hours     : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
         Minutes   : OUT STD_LOGIC_VECTOR (5 DOWNTO 0);
         Seconds   : OUT STD_LOGIC_VECTOR (5 DOWNTO 0)
     );
@@ -61,7 +62,7 @@ PORT (
         D0      : OUT STD_LOGIC_VECTOR (3 DOWNTO 0));
 END component;
 
-component Mux6to1_4bits is
+component Mux61 is
 PORT (
         A      : IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
         B      : IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
@@ -124,5 +125,13 @@ Port Map(counter => minutes, D1 => m1, D0 => m0);
 splitter_2 : Splitter
 Port Map(counter => seconds, D1 => s1, D0 => s0);
 
-end architecture;
+mux : Mux61
+Port Map(A => h0, B => h1, C => m0, D => m1, E => s0, F => s1, Sel => select_signal, Output => bcd);
 
+bctto7s: bcdto7seg
+PORT map(BCD => bcd, Segments => Segments);
+
+sel : selector
+port map(Clk => clk, Count => select_signal, Display => Digits);
+
+end architecture;

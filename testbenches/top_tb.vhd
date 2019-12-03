@@ -36,6 +36,7 @@ ARCHITECTURE Behavioral OF Top_tb IS
 
     --Outputs
     SIGNAL Segments     : STD_LOGIC_VECTOR (6 DOWNTO 0);
+    SIGNAL Digits       : STD_LOGIC_VECTOR (5 DOWNTO 0);
     --signal Leds : STD_LOGIC_VECTOR (7 downto 0);
 
     -- Clock period definitions
