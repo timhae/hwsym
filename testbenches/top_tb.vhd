@@ -40,7 +40,7 @@ ARCHITECTURE Behavioral OF Top_tb IS
     --signal Leds : STD_LOGIC_VECTOR (7 downto 0);
 
     -- Clock period definitions
-    CONSTANT clk_period : TIME := 10 ns; -- 100MHz (PIN Y9 on the Zedboard)
+    CONSTANT clk_period : TIME := 1 ns; -- 100MHz (PIN Y9 on the Zedboard)
 
 BEGIN
 
@@ -76,30 +76,27 @@ BEGIN
         Reset <= '1';
         WAIT FOR clk_period;
         Reset <= '0';
+        WAIT FOR 40*clk_period;
+
+        PB_Center <= '1';
         WAIT FOR clk_period;
---        SW    <= "00";
---        WAIT FOR (1ms - clk_period);
-
-        WAIT FOR 500 us;
-        PB_Center <= '1';
-        WAIT FOR 500 us;
         PB_Center <= '0';
-        WAIT FOR 150 us;
+        WAIT FOR 5*clk_period;
         PB_Center <= '1';
-        WAIT FOR 250 us;
+        WAIT FOR clk_period;
         PB_Center <= '0';
-        WAIT FOR 200 us;
+        WAIT FOR clk_period;
         PB_Center <= '1';
 
-        WAIT FOR 3 ms;
+        WAIT FOR 10*clk_period;
         PB_Center <= '0';
-        WAIT FOR 200 us;
+        WAIT FOR clk_period;
         PB_Center <= '1';
-        WAIT FOR 500 us;
+        WAIT FOR 2*clk_period;
         PB_Center <= '0';
-        WAIT FOR 150 us;
+        WAIT FOR 3*clk_period;
         PB_Center <= '1';
-        WAIT FOR 250 us;
+        WAIT FOR clk_period;
         PB_Center <= '0';
 
         WAIT FOR 5 ms;

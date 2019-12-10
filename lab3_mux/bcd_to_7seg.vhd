@@ -13,16 +13,16 @@ BEGIN
     PROCESS (BCD)
     BEGIN
         CASE BCD IS
-            WHEN "0000" => Segments <= "1111110";       -- 0 
-            WHEN "0001" => Segments <= "0110000";       -- 1 
-            WHEN "0010" => Segments <= "1101101";       -- 2 
-            WHEN "0011" => Segments <= "1111001";       -- 3 
-            WHEN "0100" => Segments <= "0110011";       -- 4 
-            WHEN "0101" => Segments <= "1011011";       -- 5 
-            WHEN "0110" => Segments <= "1011111";       -- 6 
-            WHEN "0111" => Segments <= "1110000";       -- 7 
-            WHEN "1000" => Segments <= "1111111";       -- 8 
-            WHEN "1001" => Segments <= "1111011";       -- 9 
+            WHEN "0000" => Segments <= "1000000";       -- 0 
+            WHEN "0001" => Segments <= "1111001";       -- 1 
+            WHEN "0010" => Segments <= "0100100";       -- 2 
+            WHEN "0011" => Segments <= "0110000";       -- 3 
+            WHEN "0100" => Segments <= "0011001";       -- 4 
+            WHEN "0101" => Segments <= "0010010";       -- 5 
+            WHEN "0110" => Segments <= "0000010";       -- 6 
+            WHEN "0111" => Segments <= "1111000";       -- 7 
+            WHEN "1000" => Segments <= "0000000";       -- 8 
+            WHEN "1001" => Segments <= "0010000";       -- 9
             WHEN OTHERS => Segments <= (OTHERS => '0'); -- default
         END CASE;
     END PROCESS;

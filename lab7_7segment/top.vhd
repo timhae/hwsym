@@ -19,6 +19,8 @@ architecture behavioural of Top is
 
 --components
 component Debouncer is
+GENERIC (threshold : POSITIVE := 5);
+--GENERIC (threshold : POSITIVE := 10000000);
 PORT (
         clk       : IN  STD_LOGIC;
         Button    : IN  STD_LOGIC;
@@ -41,6 +43,7 @@ END component;
 component Counters is
 GENERIC (
         Fin  : INTEGER := 10; -- should be 1s
+--        Fin  : INTEGER := 100000000; -- should be 1s
         Fout : INTEGER := 1);
 PORT (
         Clk       : IN  STD_LOGIC;
@@ -82,7 +85,8 @@ PORT (
 end component;
 
 component selector is
-GENERIC (delay : INTEGER := 5); -- should be 1ms
+GENERIC (delay : INTEGER := 2); -- should be 1ms
+--GENERIC (delay : INTEGER := 10000); -- should be 1ms
 PORT (
         Clk     : IN  STD_LOGIC;
         Count   : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
