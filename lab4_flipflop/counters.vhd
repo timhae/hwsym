@@ -4,7 +4,7 @@ USE IEEE.NUMERIC_STD.ALL;
 
 ENTITY Counters IS
     GENERIC (
-        Fin  : INTEGER := 10;
+        Fin  : INTEGER := 1000000;
         Fout : INTEGER := 1);
     PORT (
         Clk       : IN  STD_LOGIC;
@@ -20,8 +20,9 @@ ENTITY Counters IS
 END Counters;
 
 ARCHITECTURE behavioral OF counters IS
-    SIGNAL h_count, m_count, s_count : INTEGER := 0;
-    SIGNAL modulo_count              : INTEGER := 0;
+    SIGNAL h_count          : INTEGER RANGE 0 TO 23 := 0;
+    SIGNAL m_count, s_count : INTEGER RANGE 0 TO 59 := 0;
+    SIGNAL modulo_count     : INTEGER := 0;
 BEGIN
     PROCESS (Clk, Reset, Up, Down, RW)
     BEGIN

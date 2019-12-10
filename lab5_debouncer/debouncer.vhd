@@ -64,6 +64,6 @@ BEGIN
     END PROCESS;
 
     detector : EdgeDetector
-    PORT MAP(clk, fin, debounced);
+    PORT MAP(Clk => clk, InputSignal => fin, Edge => debounced);
 
 END Behavioral;

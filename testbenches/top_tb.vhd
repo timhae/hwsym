@@ -32,7 +32,7 @@ ARCHITECTURE Behavioral OF Top_tb IS
     SIGNAL PB_Up        : STD_LOGIC := '0';
     SIGNAL PB_Down      : STD_LOGIC := '0';
     SIGNAL PB_Center    : STD_LOGIC := '0';
-    SIGNAL SW           : STD_LOGIC_VECTOR (1 DOWNTO 0);
+--    SIGNAL SW           : STD_LOGIC_VECTOR (1 DOWNTO 0);
 
     --Outputs
     SIGNAL Segments     : STD_LOGIC_VECTOR (6 DOWNTO 0);
@@ -72,9 +72,15 @@ BEGIN
     BEGIN
         WAIT FOR clk_period;
         Reset <= '0';
-        SW    <= "00";
-        WAIT FOR (1ms - clk_period);
+        WAIT FOR clk_period;
+        Reset <= '1';
+        WAIT FOR clk_period;
+        Reset <= '0';
+        WAIT FOR clk_period;
+--        SW    <= "00";
+--        WAIT FOR (1ms - clk_period);
 
+        WAIT FOR 500 us;
         PB_Center <= '1';
         WAIT FOR 500 us;
         PB_Center <= '0';

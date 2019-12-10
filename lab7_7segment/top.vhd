@@ -40,7 +40,7 @@ END component;
 
 component Counters is
 GENERIC (
-        Fin  : INTEGER := 10;
+        Fin  : INTEGER := 10; -- should be 1s
         Fout : INTEGER := 1);
 PORT (
         Clk       : IN  STD_LOGIC;
@@ -82,6 +82,7 @@ PORT (
 end component;
 
 component selector is
+GENERIC (delay : INTEGER := 5); -- should be 1ms
 PORT (
         Clk     : IN  STD_LOGIC;
         Count   : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
@@ -117,18 +118,18 @@ Port Map(clk => clk, reset => reset, up => PB_Up, down => PB_down, rw => state, 
 
 
 splitter_0 : Splitter
-Port Map(counter => hours, D1 => h1, D0 => h0);
+Port Map(counter => hours, D1 => h0, D0 => h1);
 
 splitter_1 : Splitter
-Port Map(counter => minutes, D1 => m1, D0 => m0);
+Port Map(counter => minutes, D1 => m0, D0 => m1);
 
 splitter_2 : Splitter
-Port Map(counter => seconds, D1 => s1, D0 => s0);
+Port Map(counter => seconds, D1 => s0, D0 => s1);
 
 mux : Mux61
 Port Map(A => h0, B => h1, C => m0, D => m1, E => s0, F => s1, Sel => select_signal, Output => bcd);
 
-bctto7s: bcdto7seg
+bcdto7s: bcdto7seg
 PORT map(BCD => bcd, Segments => Segments);
 
 sel : selector

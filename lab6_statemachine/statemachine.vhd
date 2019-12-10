@@ -15,7 +15,7 @@ END StateMachine;
 ARCHITECTURE Behavioral OF StateMachine IS
 
     TYPE state_type IS (read, write_h, write_m, write_s);
-    SIGNAL state, next_state : state_type;
+    SIGNAL state, next_state : state_type := read;
 
 BEGIN
 
