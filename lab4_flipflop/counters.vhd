@@ -28,80 +28,82 @@ BEGIN
     BEGIN
         -- reset highest prio, async
         IF (reset = '0') THEN
-            -- write mode second highest prio, async
-            IF (RW = '1') THEN
-
-                -- change hours
-                IF (Condition = "00") THEN
-                    IF (Up = '1' AND Down = '0') THEN
-                        IF (h_count = 23) THEN
-                            h_count <= 0;
-                        ELSE
-                            h_count <= h_count + 1;
-                        END IF;
-                    ELSIF (Up = '0' AND Down = '1') THEN
-                        IF (h_count = 0) THEN
-                            h_count <= 23;
-                        ELSE
-                            h_count <= h_count - 1;
-                        END IF;
-                    END IF;
-
-                    -- change minutes
-                ELSIF Condition = "01" THEN
-                    IF (Up = '1' AND Down = '0') THEN
-                        IF (m_count = 59) THEN
-                            m_count <= 0;
-                        ELSE
-                            m_count <= m_count + 1;
-                        END IF;
-                    ELSIF (Up = '0' AND Down = '1') THEN
-                        IF (m_count = 0) THEN
-                            m_count <= 59;
-                        ELSE
-                            m_count <= m_count - 1;
-                        END IF;
-                    END IF;
-
-                    -- change seconds
-                ELSIF Condition = "10" THEN
-                    IF (Up = '1' AND Down = '0') THEN
-                        IF (s_count = 59) THEN
-                            s_count <= 0;
-                        ELSE
-                            s_count <= s_count + 1;
-                        END IF;
-                    ELSIF (Up = '0' AND Down = '1') THEN
-                        IF (s_count = 0) THEN
-                            s_count <= 59;
-                        ELSE
-                            s_count <= s_count - 1;
-                        END IF;
-                    END IF;
-                END IF;
-
-                -- normal counting mode last prio, sync
-            ELSIF (RW = '0' AND clk'event AND clk = '1') THEN
-                IF (modulo_count = Fin) THEN
-                    modulo_count <= 0;
-                    s_count      <= s_count + 1;
-                    -- handle overflows
-                    IF (s_count = 59) THEN
-                        s_count <= 0;
-                        m_count <= m_count + 1;
-                        IF (m_count = 59) THEN
-                            m_count <= 0;
-                            h_count <= h_count + 1;
+            if rising_edge(clk) then
+    
+                -- write mode second highest prio, async
+                IF (RW = '1') THEN
+    
+                    -- change hours
+                    IF (Condition = "00") THEN
+                        IF (Up = '1' AND Down = '0') THEN
                             IF (h_count = 23) THEN
                                 h_count <= 0;
+                            ELSE
+                                h_count <= h_count + 1;
+                            END IF;
+                        ELSIF (Up = '0' AND Down = '1') THEN
+                            IF (h_count = 0) THEN
+                                h_count <= 23;
+                            ELSE
+                                h_count <= h_count - 1;
+                            END IF;
+                        END IF;
+    
+                        -- change minutes
+                    ELSIF Condition = "01" THEN
+                        IF (Up = '1' AND Down = '0') THEN
+                            IF (m_count = 59) THEN
+                                m_count <= 0;
+                            ELSE
+                                m_count <= m_count + 1;
+                            END IF;
+                        ELSIF (Up = '0' AND Down = '1') THEN
+                            IF (m_count = 0) THEN
+                                m_count <= 59;
+                            ELSE
+                                m_count <= m_count - 1;
+                            END IF;
+                        END IF;
+    
+                        -- change seconds
+                    ELSIF Condition = "10" THEN
+                        IF (Up = '1' AND Down = '0') THEN
+                            IF (s_count = 59) THEN
+                                s_count <= 0;
+                            ELSE
+                                s_count <= s_count + 1;
+                            END IF;
+                        ELSIF (Up = '0' AND Down = '1') THEN
+                            IF (s_count = 0) THEN
+                                s_count <= 59;
+                            ELSE
+                                s_count <= s_count - 1;
                             END IF;
                         END IF;
                     END IF;
-                ELSE
-                    modulo_count <= modulo_count + 1;
+    
+                    -- normal counting mode last prio, sync
+                else
+                    IF (modulo_count = Fin) THEN
+                        modulo_count <= 0;
+                        s_count      <= s_count + 1;
+                        -- handle overflows
+                        IF (s_count = 59) THEN
+                            s_count <= 0;
+                            m_count <= m_count + 1;
+                            IF (m_count = 59) THEN
+                                m_count <= 0;
+                                h_count <= h_count + 1;
+                                IF (h_count = 23) THEN
+                                    h_count <= 0;
+                                END IF;
+                            END IF;
+                        END IF;
+                    ELSE
+                        modulo_count <= modulo_count + 1;
+                    END IF;
                 END IF;
-            END IF;
-
+            end if;
             -- reset
         ELSE
             modulo_count <= 0;

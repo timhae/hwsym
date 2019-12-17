@@ -17,10 +17,15 @@ end Top;
 
 architecture behavioural of Top is
 
+component ila_0 is
+PORT (clk : in STD_LOGIC;
+    PROBE0 : in STD_LOGIC
+    );
+end component;
 --components
 component Debouncer is
-GENERIC (threshold : POSITIVE := 5);
---GENERIC (threshold : POSITIVE := 10000000);
+--GENERIC (threshold : POSITIVE := 5);
+GENERIC (threshold : POSITIVE := 1000000);
 PORT (
         clk       : IN  STD_LOGIC;
         Button    : IN  STD_LOGIC;
@@ -42,8 +47,8 @@ END component;
 
 component Counters is
 GENERIC (
-        Fin  : INTEGER := 10; -- should be 1s
---        Fin  : INTEGER := 100000000; -- should be 1s
+--        Fin  : INTEGER := 10; -- should be 1s
+        Fin  : INTEGER := 100000000; -- should be 1s
         Fout : INTEGER := 1);
 PORT (
         Clk       : IN  STD_LOGIC;
@@ -85,8 +90,8 @@ PORT (
 end component;
 
 component selector is
-GENERIC (delay : INTEGER := 2); -- should be 1ms
---GENERIC (delay : INTEGER := 10000); -- should be 1ms
+--GENERIC (delay : INTEGER := 1); -- should be 1ms
+GENERIC (delay : INTEGER := 10000); -- should be 1ms
 PORT (
         Clk     : IN  STD_LOGIC;
         Count   : OUT STD_LOGIC_VECTOR (2 DOWNTO 0);
@@ -103,6 +108,12 @@ SIGNAL segments_signal : STD_LOGIC_VECTOR (6 downto 0) := (others => '0');
 
 begin
 -- port maps
+la0: ila_0
+port map(clk => clk, probe0 => PB_Center);
+
+la1: ila_0
+port map(clk => clk, probe0 => center);
+
 debouncer_0 : debouncer
 Port map(clk => clk, button => PB_Up, debounced => up);
 debouncer_1 : debouncer

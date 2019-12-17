@@ -19,16 +19,15 @@ ARCHITECTURE Behavioral OF StateMachine IS
 
 BEGIN
 
-    SYNC_PROC : PROCESS (Clk)
+    SYNC_PROC : PROCESS (Clk, reset)
     BEGIN
+    IF (Reset = '0') THEN
         IF (Clk'event AND Clk = '1') THEN
-            IF (Reset = '1') THEN
-                state <= read;
-            ELSE
-                state <= next_state;
-                -- assign other outputs to internal signals
-            END IF;
+            state <= next_state;
         END IF;
+    ELSE
+        state <= read;
+    end if;
     END PROCESS;
 
     OUTPUT_DECODE : PROCESS (state)
