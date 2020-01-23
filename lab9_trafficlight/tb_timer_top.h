@@ -12,7 +12,7 @@
 #include "timer.h"
 #include "tb_timer.h"
 
-SC_MODULE(tb_timer_top){
+SC_MODULE(tb_timer_top) {
 
 	sc_clock clk;
 

@@ -10,26 +10,27 @@ timer::timer(sc_module_name name) {
 
 void timer::time() {
 	// i for 30 sec, j for 60 sec, k for 120 sec
-	uint i, j, k;
+	int i, j, k;
+	i = 0; j = 0; k = 0;
 	while(true) {
-		timer_30sec.write(0);
-		timer_60sec.write(0);
-		timer_120sec.write(0);
+		timer_30sec = 0;
+		timer_60sec = 0;
+		timer_120sec = 0;
 		i++;
 		j++;
 		k++;
 		if (i == 30) {
-			timer_30sec.write(1);
+			timer_30sec = 1;
 			i = 0;
 		}
 
 		if (j == 60) {
-			timer_60sec.write(1);
+			timer_60sec = 1;
 			j = 0;
 		}
 
 		if (k == 120) {
-			timer_120sec.write(1);
+			timer_120sec = 1;
 			k = 0;
 		}
 
