@@ -7,7 +7,7 @@ void tb_timer :: test() {
 	cout << "timer_30sec: " << timer_30sec.read() << endl;
 	cout << "timer_60sec: " << timer_60sec.read() << endl;
 	cout << "timer_120sec: " << timer_120sec.read() << endl;
-	wait(1, SC_SEC);
+	wait(10, SC_SEC);
 	reset = true;
 	cout << "after reset: " << endl;
 	cout << "timer_30sec: " << timer_30sec.read() << endl;
