@@ -22,7 +22,6 @@ void fsm::process_state() {
 					or ((0 < counter_cars_sidestreet.read()) and duration_main_greater_120)
 					or (0 < counter_tram.read())) {
 					soon_light = 0;
-					trafficlight_mainstreet = 0;
 					yellow = 5;
 				}
 			} else {
@@ -54,6 +53,11 @@ void fsm::process_state() {
 			duration_main_greater_60 = 0;
 			duration_main_greater_120 = 0;
 			timer_reset = 1;
+			if (soon_light) {
+				trafficlight_sidestreet = 0;
+			} else {
+				trafficlight_mainstreet = 0;
+			}
 			if (yellow == 0) {
 				timer_reset = 0;
 				if (soon_light) {
