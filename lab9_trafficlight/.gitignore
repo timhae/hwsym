@@ -1,0 +1,4 @@
+main
+main.o
+shell.nix
+systemc-2.3.1/
